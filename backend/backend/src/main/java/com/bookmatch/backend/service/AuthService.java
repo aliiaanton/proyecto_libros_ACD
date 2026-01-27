@@ -13,7 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Servicio encargado de la lógica de autenticación y gestión de cuentas de usuario.
@@ -35,6 +37,9 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private EmailService emailService;
+
     /**
      * Autentica a un usuario existente verificando sus credenciales (email y contraseña).
      * Si las credenciales son válidas, genera y devuelve un token JWT para la sesión.
@@ -43,6 +48,7 @@ public class AuthService {
      * @return AuthResponse con el token JWT generado y el nombre de usuario.
      * @throws org.springframework.security.core.AuthenticationException Si las credenciales son incorrectas.
      * @throws java.util.NoSuchElementException Si el usuario no se encuentra en la base de datos tras la autenticación.
+     * @throws RuntimeException Si el email del usuario no ha sido verificado.
      */
     public AuthResponse login(LoginRequest request) {
         // 1. Autenticar con Spring Security (esto comprueba usuario y contraseña automáticamente)
@@ -55,7 +61,12 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        // 3. Convertimos a UserDetails (objeto estándar de Spring Security) para generar el token
+        // 3. Verificar si el email está verificado
+        if (!user.isEmailVerified()) {
+            throw new RuntimeException("Debes verificar tu email antes de iniciar sesión");
+        }
+
+        // 4. Convertimos a UserDetails (objeto estándar de Spring Security) para generar el token
         // Usamos una lista vacía de autoridades por ahora
         var userDetails = new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
@@ -63,10 +74,10 @@ public class AuthService {
                 new ArrayList<>()
         );
 
-        // 4. Generar el Token JWT usando el servicio de seguridad
+        // 5. Generar el Token JWT usando el servicio de seguridad
         String jwtToken = jwtService.generateToken(userDetails);
 
-        // 5. Devolver la respuesta con el token
+        // 6. Devolver la respuesta con el token
         return AuthResponse.builder()
                 .token(jwtToken)
                 .username(user.getUsername())
@@ -77,10 +88,11 @@ public class AuthService {
      * Registra un nuevo usuario en el sistema.
      * Verifica que el email no exista previamente, encripta la contraseña usando BCrypt
      * y asigna el rol de usuario base (USER) por defecto.
+     * Genera un token de verificación y envía un email al usuario para que verifique su cuenta.
      *
      * @param request Objeto con los datos del formulario de registro (usuario, email, password).
      * @return El objeto User que ha sido guardado en la base de datos.
-     * @throws RuntimeException Si el email ya está registrado en el sistema.
+     * @throws RuntimeException Si el email o username ya está registrado en el sistema.
      */
     public User register(RegisterRequest request) {
         // 1. Validar que el usuario no exista ya
@@ -88,15 +100,53 @@ public class AuthService {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        // 2. Crear el usuario nuevo usando el patrón Builder
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("El usuario ya existe");
+        }
+
+        // 2. Generar token de verificación
+        String verificationToken = UUID.randomUUID().toString();
+
+        // 3. Crear el usuario nuevo usando el patrón Builder
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword())) // ¡Aquí encriptamos la clave!
                 .role(Role.USER) // Por defecto todos son usuarios normales
+                .emailVerified(false) // El email no está verificado inicialmente
+                .verificationToken(verificationToken)
+                .verificationTokenExpiry(LocalDateTime.now().plusHours(24)) // Token válido por 24 horas
                 .build();
 
-        // 3. Guardar en MySQL
-        return userRepository.save(user);
+        // 4. Guardar en MySQL
+        User savedUser = userRepository.save(user);
+
+        // 5. Enviar email de verificación
+        emailService.sendVerificationEmail(savedUser.getEmail(), verificationToken);
+
+        return savedUser;
+    }
+
+    /**
+     * Verifica el email de un usuario usando el token de verificación.
+     *
+     * @param token Token de verificación enviado al email del usuario.
+     * @throws RuntimeException Si el token es inválido o ha expirado.
+     */
+    public void verifyEmail(String token) {
+        // 1. Buscar el usuario por el token
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new RuntimeException("Token inválido"));
+
+        // 2. Verificar si el token ha expirado
+        if (user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("El token ha expirado");
+        }
+
+        // 3. Marcar el email como verificado y limpiar el token
+        user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationTokenExpiry(null);
+        userRepository.save(user);
     }
 }

@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="logo">BookMatch 📚</div>
+  <ul class="nav-links">
+    <li><a routerLink="/">Inicio</a></li>
+    <li><a routerLink="/blind-date">Cita a Ciegas</a></li>
+    <!-- Solo mostramos Biblioteca si está logueado -->
+    <li *ngIf="isLoggedIn"><a routerLink="/library">Mi Biblioteca</a></li>
+  </ul>
+  
+  <div class="auth-buttons">
+    <!-- Si NO estamos logueados -->
+    <ng-container *ngIf="!isLoggedIn">
+      <a routerLink="/login" class="btn-login">Entrar</a>
+      <a routerLink="/register" class="btn-register">Registrarse</a>
+    </ng-container>
+
+    <!-- Si SÍ estamos logueados -->
+    <ng-container *ngIf="isLoggedIn">
+      <span style="margin-right: 10px;">Hola, {{ username }}</span>
+      <button (click)="logout()" class="btn-logout">Salir</button>
+    </ng-container>
+  </div>
+</nav>

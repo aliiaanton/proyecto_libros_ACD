@@ -103,6 +103,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Spring Boot Mail: Para enviar emails de verificación -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

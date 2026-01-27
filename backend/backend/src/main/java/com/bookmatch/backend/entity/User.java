@@ -29,6 +29,15 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
+
+    @Column(name = "verification_token", unique = true)
+    private String verificationToken;
+
+    @Column(name = "verification_token_expiry")
+    private LocalDateTime verificationTokenExpiry;
+
     @Column(columnDefinition = "TEXT")
     private String bio;
 

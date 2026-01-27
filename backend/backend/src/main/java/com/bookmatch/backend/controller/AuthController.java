@@ -30,15 +30,41 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
         try {
             User newUser = authService.register(request);
-            return ResponseEntity.ok("Usuario registrado con éxito: " + newUser.getUsername());
+            return ResponseEntity.ok("Usuario registrado con éxito. Por favor, verifica tu email para activar tu cuenta.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-
+    /**
+     * Endpoint de inicio de sesión.
+     *
+     * @param request Credenciales del usuario (email y contraseña).
+     * @return ResponseEntity con el token JWT y datos del usuario.
+     */
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            AuthResponse response = authService.login(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Verifica el email de un usuario usando el token enviado por correo.
+     *
+     * @param token Token de verificación único.
+     * @return ResponseEntity con mensaje de éxito o error.
+     */
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestParam String token) {
+        try {
+            authService.verifyEmail(token);
+            return ResponseEntity.ok("Email verificado correctamente. Ya puedes iniciar sesión.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
