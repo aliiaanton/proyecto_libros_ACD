@@ -1,0 +1,52 @@
+<nav class="navbar">
+  <div class="container flex-between">
+    <!-- Logo -->
+    <a routerLink="/home" class="navbar-brand">
+      <i class="fa-solid fa-book-open-reader"></i> BookMatch 🎀
+    </a>
+
+    <!-- Links de Navegación -->
+    <ul class="navbar-nav flex-center">
+      <li>
+        <a routerLink="/home" routerLinkActive="active">
+          <i class="fa-solid fa-house"></i> Inicio
+        </a>
+      </li>
+      <li>
+        <a routerLink="/blind-date" routerLinkActive="active">
+          <i class="fa-solid fa-mask"></i> Cita a Ciegas
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/quiz" routerLinkActive="active">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Oráculo
+        </a>
+      </li>
+
+      <!-- Solo visible si está logueado -->
+      <li *ngIf="currentUser()">
+        <a routerLink="/my-library" routerLinkActive="active">
+          <i class="fa-solid fa-heart"></i> Mi Biblioteca
+        </a>
+      </li>
+    </ul>
+
+    <!-- Acciones de Usuario -->
+    <div class="navbar-actions">
+      <!-- Caso: Usuario NO logueado -->
+      <ng-container *ngIf="!currentUser()">
+        <a routerLink="/login" class="btn btn-outline">Ingresar</a>
+        <a routerLink="/register" class="btn btn-primary" style="margin-left: 10px;">Regístrate</a>
+      </ng-container>
+
+      <!-- Caso: Usuario SI logueado -->
+      <div class="user-dropdown flex-center" *ngIf="currentUser()">
+        <span class="username">Hola, {{ currentUser() }} ✨</span>
+        <button (click)="logout()" class="btn btn-icon" title="Cerrar Sesión">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

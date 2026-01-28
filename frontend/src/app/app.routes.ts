@@ -1,19 +1,37 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './components/home/home.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { Library } from './components/library/library.component';
-import { BlindDate } from './components/blind-date/blind-date.component';
-import { RegistrationConfirmationComponent } from './components/registration-confirmation/registration-confirmation.component';
-import { EmailVerificationComponent } from './components/email-verification/email-verification.component';
+
+// Importación de los componentes (Páginas)
+import { HomeComponent } from './pages/home/home.component';
+import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { BlindDateComponent } from './pages/blind-date/blind-date.component';
+import { BookDetailComponent } from './pages/book-detail/book-detail.component';
+import { QuizComponent } from './pages/quiz/quiz.component';
+import { MyLibraryComponent } from './pages/my-library/my-library.component';
+import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
+import { SearchComponent } from './pages/search/search.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },           // Página principal (Home)
-  { path: 'login', component: LoginComponent },     // Página Login
-  { path: 'register', component: RegisterComponent }, // Página Registro
-  { path: 'registration-confirmation', component: RegistrationConfirmationComponent }, // Confirmación registro
-  { path: 'verify-email', component: EmailVerificationComponent }, // Verificación email
-  { path: 'library', component: Library }, // Mi Biblioteca
-  { path: 'blind-date', component: BlindDate }, // Cita a ciegas
-  { path: '**', redirectTo: '' }                    // Si pone una ruta rara, volver al Home
+  // Redirección inicial: Si entran a la raíz, van al Home
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+
+  // Rutas Públicas
+  { path: 'home', component: HomeComponent, title: 'Inicio | BookMatch 🎀' },
+  { path: 'login', component: LoginComponent, title: 'Ingresar | BookMatch' },
+  { path: 'register', component: RegisterComponent, title: 'Registro | BookMatch' },
+  { path: 'blind-date', component: BlindDateComponent, title: 'Cita a Ciegas 💌' },
+  { path: 'quiz', component: QuizComponent, title: 'El Oráculo Literario ✨' },
+  { path: 'my-library', component: MyLibraryComponent, title: 'Mi Biblioteca 📚' },
+  { path: 'verify-email', component: VerifyEmailComponent, title: 'Verificando... ⏳' },
+  { path: 'search', component: SearchComponent, title: 'Resultados 🔎' },
+  
+  // Ruta de Detalle (acepta un ID dinámico)
+  { path: 'book/:id', component: BookDetailComponent, title: 'Detalle del Libro 📖' },
+
+  // Rutas Pendientes (Las crearemos en los siguientes pasos, las dejo comentadas para que no den error)
+  // { path: 'quiz', component: QuizComponent },
+  // { path: 'my-library', component: MyLibraryComponent, canActivate: [authGuard] },
+  
+  // Wildcard: Cualquier ruta desconocida redirige al Home
+  { path: '**', redirectTo: 'home' }
 ];

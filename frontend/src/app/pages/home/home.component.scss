@@ -1,0 +1,205 @@
+/* --- HERO SECTION --- */
+.hero-section {
+  padding: 80px 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 187, 208, 0.1) 100%);
+  margin-bottom: 40px;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  
+  .highlight {
+    color: var(--bm-pink-dark);
+    font-style: italic;
+    font-weight: 700;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--bm-text-light);
+  margin-bottom: 40px;
+}
+
+/* Buscador Redondeado */
+.search-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 18px 60px 18px 25px;
+  border-radius: 50px;
+  border: 2px solid white;
+  background-color: white;
+  box-shadow: 0 5px 20px rgba(240, 98, 146, 0.15);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: var(--bm-pink-main);
+    box-shadow: 0 8px 25px rgba(240, 98, 146, 0.25);
+  }
+}
+
+.search-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--bm-pink-main);
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 1.1rem;
+
+  &:hover {
+    background-color: var(--bm-pink-dark);
+  }
+}
+
+/* --- SECCIONES DE CONTENIDO --- */
+.section-block {
+  margin-bottom: 60px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 30px;
+  
+  h2 {
+    font-size: 2.2rem;
+    color: var(--bm-text-main);
+    margin-bottom: 10px;
+  }
+  
+  p {
+    color: var(--bm-text-light);
+    font-size: 1.1rem;
+  }
+}
+
+/* --- CSS GRID PARA LIBROS (Reemplazo de filas/columnas) --- */
+.books-grid {
+  display: grid;
+  /* Esto crea columnas automáticas que miden mínimo 200px */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 10px;
+}
+
+/* Badge de Match para recomendaciones */
+.recommendation-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.match-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: var(--bm-pink-dark);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(240, 98, 146, 0.4);
+  z-index: 2;
+  transform: rotate(5deg);
+}
+
+/* --- SECCIÓN DE CATEGORÍAS --- */
+.categories-section {
+  background-color: white;
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--bm-pink-light);
+}
+
+.row {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.col-half {
+  flex: 1;
+  min-width: 300px;
+}
+
+.tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.tag-pill {
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &.genre {
+    background-color: var(--bm-pink-light);
+    color: var(--bm-pink-dark);
+    border: 1px solid transparent;
+
+    .count {
+      background-color: rgba(255,255,255, 0.8);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+    }
+
+    &:hover {
+      background-color: white;
+      border-color: var(--bm-pink-main);
+      transform: translateY(-2px);
+    }
+  }
+
+  &.tag {
+    background-color: #f3e5f5; /* Lavender light */
+    color: #8e24aa;
+    
+    &:hover {
+      background-color: #e1bee7;
+    }
+  }
+}
+
+/* --- LOADING SPINNER --- */
+.loading-container {
+  min-height: 400px;
+  flex-direction: column;
+  color: var(--bm-pink-dark);
+  font-weight: 600;
+  
+  .spinner {
+    font-size: 3rem;
+    animation: spin 2s infinite linear;
+    margin-bottom: 20px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

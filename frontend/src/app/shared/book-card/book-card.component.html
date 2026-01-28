@@ -1,0 +1,26 @@
+<div class="card book-card">
+  <div class="cover-wrapper">
+    <!-- Usamos una imagen por defecto si no hay url -->
+    <img [src]="book.coverUrl || 'assets/placeholder-book.png'" 
+         [alt]="book.title" 
+         class="book-cover">
+    
+    <!-- Capa que aparece al pasar el ratón -->
+    <div class="overlay flex-center">
+      <a [routerLink]="['/book', book.bookId || book.googleBookId]" class="btn btn-primary btn-sm">
+        Ver Detalles
+      </a>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <h3 class="book-title" title="{{ book.title }}">{{ book.title }}</h3>
+    <p class="book-author">{{ book.authors }}</p>
+    
+    <!-- Badges de Género (mostramos solo el primero si hay muchos) -->
+    <div class="tags-container" *ngIf="book.genres && book.genres.length > 0">
+      <span class="tag-pill">{{ book.genres[0] }}</span>
+      <span class="tag-more" *ngIf="book.genres.length > 1">+{{ book.genres.length - 1 }}</span>
+    </div>
+  </div>
+</div>

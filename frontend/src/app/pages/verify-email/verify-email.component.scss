@@ -1,0 +1,63 @@
+.verify-container {
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+  background: radial-gradient(circle, #fff0f5 0%, #ffffff 100%);
+}
+
+.verify-card {
+  background: white;
+  padding: 50px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 40px rgba(240, 98, 146, 0.15);
+  max-width: 450px;
+  width: 100%;
+  border: 1px solid var(--bm-pink-light);
+}
+
+/* Iconos */
+.icon-success {
+  font-size: 4rem;
+  color: #66bb6a; /* Verde suave */
+  margin-bottom: 20px;
+}
+
+.icon-error {
+  font-size: 4rem;
+  color: #ef5350; /* Rojo suave */
+  margin-bottom: 20px;
+}
+
+.spinner-heart {
+  font-size: 3rem;
+  animation: heartbeat 1s infinite;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+h3 {
+  color: var(--bm-text-main);
+  margin-bottom: 10px;
+}
+
+p {
+  color: var(--bm-text-light);
+  margin-bottom: 20px;
+}
+
+.mt-20 { margin-top: 20px; }
+
+/* Animación de entrada */
+.animate-pop-in {
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}

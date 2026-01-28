@@ -1,0 +1,71 @@
+<div class="auth-container flex-center">
+  <div class="auth-card register-card"> <!-- register-card para hacerlo más ancho -->
+    <div class="text-center mb-20">
+      <h2 class="auth-title">Únete a BookMatch 🌸</h2>
+      <p class="auth-subtitle">Crea tu perfil y recibe recomendaciones a medida</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert-success">{{ successMessage }}</div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" *ngIf="!successMessage">
+      
+      <!-- Datos Básicos -->
+      <div class="row-inputs">
+        <div class="form-group">
+          <label>Nombre de Usuario</label>
+          <input type="text" formControlName="username" placeholder="Tu apodo lector">
+        </div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="hola@bookmatch.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+      </div>
+
+      <hr class="divider">
+
+      <!-- Sección de Preferencias -->
+      <h4 class="section-title">¿Qué te gusta leer? 📚</h4>
+      <p class="section-desc">Selecciona tus géneros favoritos:</p>
+      
+      <div class="chips-container">
+        <div 
+          *ngFor="let genre of availableGenres" 
+          class="chip" 
+          [class.selected]="selectedGenreIds.includes(genre.id)"
+          (click)="toggleGenre(genre.id)">
+          {{ genre.name }}
+          <i *ngIf="selectedGenreIds.includes(genre.id)" class="fa-solid fa-check"></i>
+        </div>
+      </div>
+
+      <p class="section-desc mt-20">¿Qué "vibes" buscas? ✨</p>
+      <div class="chips-container">
+        <div 
+          *ngFor="let tag of availableTags" 
+          class="chip tag-chip" 
+          [class.selected]="selectedTagIds.includes(tag.id)"
+          (click)="toggleTag(tag.id)">
+          #{{ tag.name }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 mt-20" [disabled]="registerForm.invalid">
+        Crear mi cuenta
+      </button>
+
+      <div class="text-center mt-20">
+        <p class="small-text">
+          ¿Ya tienes cuenta? 
+          <a routerLink="/login">Inicia sesión</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

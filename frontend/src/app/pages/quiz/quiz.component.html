@@ -1,0 +1,67 @@
+<div class="quiz-container flex-center">
+  
+  <!-- 🎀 PASO 1: INTRODUCCIÓN -->
+  <div class="quiz-card intro-card text-center animate-fade-in" *ngIf="step === 'INTRO'">
+    <div class="icon-wrapper">🔮</div>
+    <h1 class="title">El Oráculo Literario</h1>
+    <p class="subtitle">Responde {{ questions.length }} sencillas preguntas y deja que el destino decida tu próxima aventura.</p>
+    
+    <button (click)="startQuiz()" class="btn btn-primary btn-lg mt-20" [disabled]="questions.length === 0">
+      {{ questions.length === 0 ? 'Cargando oráculo...' : 'Comenzar Test ✨' }}
+    </button>
+  </div>
+
+  <!-- 🎀 PASO 2: PREGUNTAS -->
+  <div class="quiz-card question-card" *ngIf="step === 'QUESTION'">
+    <!-- Barra de Progreso -->
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" [style.width.%]="progress"></div>
+    </div>
+    
+    <span class="step-indicator">Pregunta {{ currentQuestionIndex + 1 }} de {{ questions.length }}</span>
+
+    <h2 class="question-text">
+      {{ questions[currentQuestionIndex].question }}
+    </h2>
+
+    <div class="options-grid">
+      <button 
+        *ngFor="let option of questions[currentQuestionIndex].options; let i = index"
+        class="option-btn"
+        (click)="selectOption(i)">
+        {{ option }}
+      </button>
+    </div>
+  </div>
+
+  <!-- 🎀 PASO 3: PENSANDO (LOADING) -->
+  <div class="quiz-card loading-card text-center" *ngIf="step === 'LOADING'">
+    <div class="crystal-ball">🔮</div>
+    <h3>Consultando a los astros...</h3>
+    <p>Analizando tus vibras lectoras</p>
+  </div>
+
+  <!-- 🎀 PASO 4: RESULTADO -->
+  <div class="quiz-card result-card animate-pop-in" *ngIf="step === 'RESULT' && result">
+    <div class="confetti-deco">🎉</div>
+    
+    <h2 class="result-title">¡Lo hemos encontrado!</h2>
+    <p class="result-explanation">
+      {{ result.explanation }}
+    </p>
+
+    <div class="book-result-wrapper">
+      <app-book-card [book]="result.recommendedBook"></app-book-card>
+    </div>
+
+    <div class="match-percentage">
+      Match: {{ result.matchPercentage | number:'1.0-0' }}%
+    </div>
+
+    <div class="actions mt-20">
+      <button (click)="reset()" class="btn btn-outline">Hacer otro test</button>
+      <a [routerLink]="['/book', result.recommendedBook.googleBookId]" class="btn btn-primary">Ver detalles</a>
+    </div>
+  </div>
+
+</div>

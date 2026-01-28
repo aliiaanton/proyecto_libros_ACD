@@ -1,0 +1,67 @@
+<div class="blind-date-container flex-center">
+  
+  <div class="content-wrapper">
+    <!-- Header Romántico -->
+    <div class="text-center mb-20">
+      <h1 class="page-title">Cita a Ciegas con un Libro 💌</h1>
+      <p class="page-subtitle">Déjate enamorar por las palabras antes de juzgar la portada.</p>
+    </div>
+
+    <!-- SPINNER DE CARGA -->
+    <div *ngIf="isLoading" class="loading-state text-center">
+      <div class="spinner-heart">💖</div>
+      <p>Buscando tu pareja literaria ideal...</p>
+    </div>
+
+    <!-- TARJETA DE CITA (Se muestra si no está cargando) -->
+    <div *ngIf="!isLoading && currentDate" class="date-card-wrapper">
+      
+      <!-- LADO A: La Cita (Visible si NO hay match aún) -->
+      <div class="quote-card" *ngIf="!isMatch">
+        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+        
+        <blockquote class="quote-text">
+          "{{ currentDate.quoteText }}"
+        </blockquote>
+        
+        <div class="quote-footer">
+          <span class="genre-badge">✨ Género: {{ currentDate.genre }}</span>
+        </div>
+
+        <div class="actions">
+          <button (click)="loadNewDate()" class="btn btn-outline btn-lg">
+            <i class="fa-solid fa-xmark"></i> Siguiente
+          </button>
+          
+          <button (click)="revealIdentity()" class="btn btn-primary btn-lg btn-heartbeat" [disabled]="isRevealing">
+            <i class="fa-solid fa-heart"></i> 
+            {{ isRevealing ? 'Revelando...' : '¡Me interesa!' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- LADO B: El Libro Revelado (Visible SI hay match) -->
+      <div class="reveal-card animate-fade-in" *ngIf="isMatch && revealedBook">
+        <div class="match-header">
+          <h2>¡Es un Match! 🎉</h2>
+          <p>El libro que ha robado tu atención es:</p>
+        </div>
+
+        <div class="book-preview">
+          <!-- Reutilizamos tu componente de tarjeta -->
+          <app-book-card [book]="revealedBook"></app-book-card>
+        </div>
+
+        <div class="match-actions">
+          <button (click)="loadNewDate()" class="btn btn-outline">
+            Jugar otra vez
+          </button>
+          <a [routerLink]="['/book', revealedBook.googleBookId]" class="btn btn-primary">
+            Ver detalles completos
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="detail-container" *ngIf="book; else loading">
+  
+  <!-- CABECERA DEL LIBRO -->
+  <div class="book-header card">
+    <div class="book-cover-wrapper">
+      <img [src]="book.coverUrl || 'assets/placeholder-book.png'" class="book-cover shadow-lg">
+    </div>
+
+    <div class="book-info">
+      <h1 class="title">{{ book.title }}</h1>
+      <h3 class="author">por {{ book.authors }}</h3>
+      
+      <div class="meta-tags">
+        <span class="meta-pill" *ngIf="book.publishedDate"><i class="fa-regular fa-calendar"></i> {{ book.publishedDate }}</span>
+        <span class="meta-pill" *ngIf="book.pageCount"><i class="fa-solid fa-file-lines"></i> {{ book.pageCount }} pág.</span>
+        <span class="meta-pill rating"><i class="fa-solid fa-star"></i> {{ book.averageRatingApi || '-' }}/5</span>
+      </div>
+
+      <div class="genres mt-20">
+        <span class="genre-tag" *ngFor="let g of book.genres">{{ g }}</span>
+      </div>
+
+      <div class="description mt-20" [innerHTML]="book.description"></div>
+
+      <!-- ACCIONES DE USUARIO -->
+      <div class="actions-bar mt-20">
+        <div class="status-selector" *ngIf="authService.isLoggedIn()">
+          <label>Mi Estado:</label>
+          <select [(ngModel)]="currentStatus" (change)="onStatusChange($event)" class="custom-select">
+            <option value="">-- Sin añadir --</option>
+            <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </div>
+        <div *ngIf="!authService.isLoggedIn()" class="login-prompt">
+          <a routerLink="/login">Inicia sesión</a> para guardar este libro.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN DE RESEÑAS -->
+  <div class="reviews-section mt-20">
+    <h2 class="section-title">Opiniones de la Comunidad 💬</h2>
+
+    <!-- Formulario Nueva Reseña -->
+    <div class="write-review card mb-20" *ngIf="authService.isLoggedIn()">
+      <h4>Dejar una reseña</h4>
+      <div class="rating-input">
+        <label>Puntuación:</label>
+        <select [(ngModel)]="newReview.rating">
+          <option [value]="5">⭐⭐⭐⭐⭐ (5/5)</option>
+          <option [value]="4">⭐⭐⭐⭐ (4/5)</option>
+          <option [value]="3">⭐⭐⭐ (3/5)</option>
+          <option [value]="2">⭐⭐ (2/5)</option>
+          <option [value]="1">⭐ (1/5)</option>
+        </select>
+      </div>
+      <textarea [(ngModel)]="newReview.comment" placeholder="¿Qué te ha parecido? Cuéntanos..." rows="3"></textarea>
+      <button (click)="submitReview()" class="btn btn-primary mt-10" [disabled]="isSubmittingReview">Publicar</button>
+    </div>
+
+    <!-- Lista de Reseñas -->
+    <div class="reviews-list">
+      <div class="review-card card" *ngFor="let review of reviews">
+        <div class="review-header flex-between">
+          <span class="user-name">@{{ review.username || 'Usuario' }}</span>
+          <div class="stars">
+            <i class="fa-solid fa-star text-warning" *ngFor="let s of [].constructor(review.rating)"></i>
+          </div>
+        </div>
+        <p class="review-body">"{{ review.comment }}"</p>
+        
+        <!-- Análisis de IA (Si tu backend lo devuelve) -->
+        <div class="ai-analysis" *ngIf="review.sentimentScore">
+            <small *ngIf="review.sentimentScore > 0" class="text-success">✨ La IA detecta energía positiva</small>
+        </div>
+      </div>
+      
+      <p *ngIf="reviews.length === 0" class="text-center text-muted">Aún no hay reseñas. ¡Sé la primera! 🌸</p>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="text-center p-5">
+    <div class="spinner-border text-pink" role="status"></div>
+    <p>Cargando libro...</p>
+  </div>
+</ng-template>

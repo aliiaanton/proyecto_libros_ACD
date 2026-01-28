@@ -1,0 +1,106 @@
+<div class="library-container">
+  
+  <!-- 🎀 CABECERA DE PERFIL -->
+  <header class="profile-header flex-center flex-column">
+    <div class="avatar-circle">
+      <!-- Inicial del usuario -->
+      {{ authService.currentUser()?.charAt(0)?.toUpperCase() }}
+    </div>
+    <h1 class="username">@{{ authService.currentUser() }}</h1>
+    <p class="bio">Amante de los libros y los atardeceres. ☕📖</p>
+    
+    <div class="stats flex-center">
+      <div class="stat-item">
+        <strong>{{ customLists.length }}</strong>
+        <span>Listas</span>
+      </div>
+      <div class="stat-item">
+        <strong>0</strong> <!-- Aquí pondrías el total de libros si el back lo diera -->
+        <span>Libros</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 🎀 PESTAÑAS (TABS) -->
+  <div class="tabs-container flex-center">
+    <button class="tab-btn" [class.active]="activeTab === 'LISTS'" (click)="activeTab = 'LISTS'">
+      <i class="fa-solid fa-list-ul"></i> Mis Listas
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'SHELF'" (click)="activeTab = 'SHELF'">
+      <i class="fa-solid fa-book"></i> Estantería
+    </button>
+  </div>
+
+  <!-- 🎀 CONTENIDO: MIS LISTAS -->
+  <div class="content-area" *ngIf="activeTab === 'LISTS'">
+    
+    <div class="actions-row">
+      <h3>Colecciones Personalizadas</h3>
+      <button (click)="showCreateModal = true" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus"></i> Nueva Lista
+      </button>
+    </div>
+
+    <!-- Grid de Listas -->
+    <div class="lists-grid" *ngIf="!isLoading && customLists.length > 0">
+      <div class="list-card" *ngFor="let list of customLists">
+        <div class="list-preview">
+          <!-- Mostramos portadas pequeñitas de los primeros 3 libros si hay -->
+          <div class="mini-cover" *ngFor="let book of list.books | slice:0:3">
+            <img [src]="$any(book).coverUrl || 'assets/placeholder-book.png'">
+          </div>
+          <div class="empty-list-placeholder" *ngIf="!list.books || list.books.length === 0">
+            Vacía 🥀
+          </div>
+        </div>
+        
+        <div class="list-info">
+          <h4>{{ list.name }}</h4>
+          <p>{{ list.description || 'Sin descripción' }}</p>
+          <div class="list-footer flex-between">
+            <span class="count">{{ list.books?.length || 0 }} libros</span>
+            <button (click)="deleteList(list.listId)" class="btn-icon-danger">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && customLists.length === 0" class="empty-state text-center">
+      <p>No tienes listas creadas.</p>
+      <button (click)="showCreateModal = true" class="btn btn-outline">Crear mi primera colección</button>
+    </div>
+  </div>
+
+  <!-- 🎀 CONTENIDO: ESTANTERÍA (Placeholder) -->
+  <div class="content-area text-center p-5" *ngIf="activeTab === 'SHELF'">
+    <i class="fa-solid fa-layer-group" style="font-size: 3rem; color: var(--bm-pink-main);"></i>
+    <h3 class="mt-20">Organización por Estado</h3>
+    <p>Aquí aparecerán tus libros clasificados por "Leyendo", "Leídos", etc.</p>
+    <small class="text-muted">(Próximamente implementado en el backend)</small>
+  </div>
+
+</div>
+
+<!-- 🎀 MODAL: CREAR LISTA -->
+<div class="modal-overlay flex-center" *ngIf="showCreateModal">
+  <div class="modal-card animate-pop-in">
+    <h3>Nueva Colección ✨</h3>
+    
+    <div class="form-group">
+      <label>Nombre de la lista</label>
+      <input type="text" [(ngModel)]="newListName" placeholder="Ej: Lecturas de Verano">
+    </div>
+    
+    <div class="form-group">
+      <label>Descripción (Opcional)</label>
+      <input type="text" [(ngModel)]="newListDesc" placeholder="Libros para leer en la playa...">
+    </div>
+
+    <div class="modal-actions flex-end gap-10 mt-20">
+      <button (click)="closeModal()" class="btn btn-outline">Cancelar</button>
+      <button (click)="createList()" class="btn btn-primary" [disabled]="!newListName">Crear</button>
+    </div>
+  </div>
+</div>

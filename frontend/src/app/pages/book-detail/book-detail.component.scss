@@ -1,0 +1,155 @@
+.detail-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* --- HEADER DEL LIBRO --- */
+.book-header {
+  display: flex;
+  gap: 40px;
+  background: white;
+  padding: 40px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.book-cover-wrapper {
+  flex-shrink: 0;
+  width: 250px;
+  
+  .book-cover {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+}
+
+.book-info {
+  flex-grow: 1;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: var(--bm-text-main);
+  margin-bottom: 5px;
+  line-height: 1.2;
+}
+
+.author {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--bm-text-light);
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.meta-tags {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.meta-pill {
+  font-size: 0.9rem;
+  color: var(--bm-text-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  &.rating {
+    color: #fbc02d; /* Color amarillo oscuro */
+    font-weight: bold;
+  }
+}
+
+.genre-tag {
+  background-color: var(--bm-pink-light);
+  color: var(--bm-pink-dark);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.description {
+  color: var(--bm-text-main);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+/* --- SELECTOR DE ESTADO --- */
+.actions-bar {
+  background-color: #fffafc;
+  padding: 20px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--bm-pink-main);
+}
+
+.status-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  
+  label { font-weight: 600; }
+}
+
+.custom-select {
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid var(--bm-pink-main);
+  background: white;
+  font-family: var(--font-body);
+  color: var(--bm-text-main);
+  cursor: pointer;
+  outline: none;
+  
+  &:focus { box-shadow: 0 0 0 3px rgba(248, 187, 208, 0.4); }
+}
+
+/* --- RESEÑAS --- */
+.section-title {
+  border-bottom: 2px solid var(--bm-pink-light);
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  color: var(--bm-pink-dark);
+}
+
+.write-review {
+  background-color: #fcfcfc;
+  
+  textarea {
+    margin-top: 10px;
+    resize: vertical;
+  }
+}
+
+.rating-input select {
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.review-card {
+  margin-bottom: 20px;
+  border-left: 4px solid var(--bm-pink-main); /* Borde lateral decorativo */
+}
+
+.user-name {
+  font-weight: 700;
+  color: var(--bm-pink-dark);
+}
+
+.review-body {
+  font-style: italic;
+  color: #555;
+  margin-top: 10px;
+}
+
+.text-warning { color: #fbc02d; }

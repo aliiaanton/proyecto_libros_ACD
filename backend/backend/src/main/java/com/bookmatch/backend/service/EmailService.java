@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -27,6 +28,7 @@ public class EmailService {
      * @param toEmail Email del destinatario.
      * @param token Token de verificación único generado para el usuario.
      */
+    @Async
     public void sendVerificationEmail(String toEmail, String token) {
         try {
             String subject = "Verifica tu cuenta de BookMatch";

@@ -1,0 +1,136 @@
+/* --- ESTILOS DE LA TARJETA DE REGISTRO --- */
+.auth-container {
+  min-height: calc(100vh - 80px);
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background: white;
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(240, 98, 146, 0.15);
+  width: 100%;
+  border: 1px solid var(--bm-pink-light);
+}
+
+.register-card {
+  max-width: 600px;
+}
+
+.auth-title {
+  font-size: 2rem;
+  color: var(--bm-pink-dark);
+}
+
+.auth-subtitle {
+  color: var(--bm-text-light);
+}
+
+.row-inputs {
+  display: flex;
+  gap: 20px;
+  
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-group { flex: 1; }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--bm-text-main);
+    font-size: 0.95rem;
+  }
+}
+
+.w-100 { width: 100%; }
+.mt-20 { margin-top: 20px; }
+.small-text { font-size: 0.9rem; color: var(--bm-text-light); }
+
+.divider {
+  border: 0;
+  border-top: 1px dashed var(--bm-pink-main);
+  margin: 20px 0;
+}
+
+.section-title {
+  color: var(--bm-text-main);
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.section-desc {
+  color: var(--bm-text-light);
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+/* --- ESTILO DE CHIPS (Etiquetas seleccionables) --- */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: #f5f5f5;
+  color: var(--bm-text-light);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  user-select: none;
+
+  &:hover {
+    background-color: var(--bm-pink-light);
+    color: var(--bm-pink-dark);
+  }
+
+  /* Estado Seleccionado */
+  &.selected {
+    background-color: var(--bm-pink-main);
+    color: white;
+    box-shadow: 0 4px 10px rgba(248, 187, 208, 0.6);
+    transform: translateY(-2px);
+    
+    i { margin-left: 5px; font-size: 0.8rem; }
+  }
+}
+
+.tag-chip {
+  &.selected {
+    background-color: var(--bm-lavender);
+    color: #6a1b9a;
+  }
+}
+
+.alert-error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #ef9a9a;
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  border: 1px solid #c8e6c9;
+  margin-bottom: 20px;
+}

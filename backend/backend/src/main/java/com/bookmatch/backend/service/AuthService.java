@@ -150,7 +150,10 @@ public class AuthService {
                 if (genre != null) {
                     UserGenrePreference preference = UserGenrePreference.builder()
                             .user(savedUser)
+                            .userId(savedUser.getUserId())
                             .genre(genre)
+                            .genreId(genre.getGenreId())
+                            .weight(1)
                             .build();
                     userGenrePreferenceRepository.save(preference);
                 }
@@ -164,7 +167,10 @@ public class AuthService {
                 if (tag != null) {
                     UserTagPreference preference = UserTagPreference.builder()
                             .user(savedUser)
+                            .userId(savedUser.getUserId())
                             .tag(tag)
+                            .tagId(tag.getTagId())
+                            .weight(1)
                             .build();
                     userTagPreferenceRepository.save(preference);
                 }

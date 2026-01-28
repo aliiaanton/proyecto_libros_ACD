@@ -1,0 +1,92 @@
+<div class="home-container">
+  
+  <!-- 🎀 HERO SECTION: Buscador y Bienvenida -->
+  <header class="hero-section">
+    <div class="container text-center">
+      <h1 class="hero-title">
+        Encuentra tu próxima<br>
+        <span class="highlight">historia de amor</span> 📖
+      </h1>
+      <p class="hero-subtitle">Explora miles de libros, crea tus listas y descubre recomendaciones mágicas.</p>
+      
+      <div class="search-wrapper">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (keyup.enter)="onSearch()"
+          placeholder="¿Qué te apetece leer hoy? (Título, autor, género...)" 
+          class="search-input">
+        <button (click)="onSearch()" class="search-btn">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-content" *ngIf="!isLoading && homeData; else loadingTpl">
+
+    <!-- 💖 SECCIÓN: Recomendaciones Personales (Si hay datos) -->
+    <section class="section-block" *ngIf="homeData.personalRecommendations && homeData.personalRecommendations.length > 0">
+      <div class="section-header">
+        <h2>Escogidos para ti, {{ currentUser() }} ✨</h2>
+        <p>Basado en tus gustos y reseñas recientes</p>
+      </div>
+
+      <div class="books-grid">
+        <div class="recommendation-wrapper" *ngFor="let item of homeData.personalRecommendations">
+          <app-book-card [book]="item.book"></app-book-card>
+          <div class="match-badge">
+            {{ item.score | number:'1.0-0' }}% Match
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📚 SECCIÓN: Libros Destacados -->
+    <section class="section-block">
+      <div class="section-header">
+        <h2>Libros Populares 🌸</h2>
+        <p>Lo que nuestra comunidad está leyendo ahora</p>
+      </div>
+
+      <div class="books-grid">
+        <app-book-card *ngFor="let book of homeData.featuredBooks" [book]="book"></app-book-card>
+      </div>
+    </section>
+
+    <!-- 🏷️ SECCIÓN: Géneros y Tags -->
+    <section class="section-block categories-section">
+      <div class="row">
+        <!-- Columna Géneros -->
+        <div class="col-half">
+          <h3>Explora por Géneros</h3>
+          <div class="tags-cloud">
+            <a *ngFor="let g of homeData.mainGenres" class="tag-pill genre">
+              {{ g.name }} <span class="count">{{ g.bookCount }}</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Columna Tags (Vibes) -->
+        <div class="col-half">
+          <h3>Vibes & Etiquetas</h3>
+          <div class="tags-cloud">
+            <a *ngFor="let t of homeData.mainTags" class="tag-pill tag">
+              #{{ t.name }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Template de Carga -->
+  <ng-template #loadingTpl>
+    <div class="loading-container flex-center">
+      <div class="spinner">🌸</div>
+      <p>Buscando los mejores libros...</p>
+    </div>
+  </ng-template>
+
+</div>

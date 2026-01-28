@@ -1,0 +1,144 @@
+.blind-date-container {
+  min-height: calc(100vh - 80px);
+  padding: 40px 20px;
+  background: radial-gradient(circle at center, #fff0f5 0%, #fce4ec 100%);
+}
+
+.content-wrapper {
+  max-width: 700px;
+  width: 100%;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  color: #880e4f; /* Rosa muy oscuro/vino */
+  margin-bottom: 10px;
+}
+
+.page-subtitle {
+  color: var(--bm-text-light);
+  font-size: 1.1rem;
+}
+
+/* --- TARJETA DE LA CITA --- */
+.quote-card {
+  background-color: white;
+  padding: 50px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 15px 40px rgba(240, 98, 146, 0.2);
+  position: relative;
+  text-align: center;
+  border: 1px solid rgba(248, 187, 208, 0.5);
+  
+  /* Decoración estilo papel */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    border: 2px dashed var(--bm-pink-light);
+    border-radius: var(--radius-md);
+    pointer-events: none;
+  }
+}
+
+.quote-icon {
+  font-size: 2rem;
+  color: var(--bm-pink-main);
+  margin-bottom: 20px;
+}
+
+.quote-text {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--bm-text-main);
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+.genre-badge {
+  background-color: var(--bm-lavender);
+  color: #6a1b9a;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 40px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-lg {
+  padding: 12px 35px;
+  font-size: 1.1rem;
+}
+
+/* Animación de latido para el botón de Match */
+.btn-heartbeat {
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.05); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.05); }
+  70% { transform: scale(1); }
+}
+
+/* --- ESTADO REVELADO (MATCH) --- */
+.reveal-card {
+  background: white;
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(240, 98, 146, 0.2);
+}
+
+.match-header h2 {
+  color: var(--bm-pink-dark);
+  font-size: 2rem;
+}
+
+.book-preview {
+  max-width: 250px; /* Tamaño de la carta revelada */
+  margin: 30px auto;
+}
+
+.match-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* --- ANIMACIONES GENERALES --- */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-state {
+  font-size: 1.2rem;
+  color: var(--bm-pink-dark);
+  padding: 50px;
+  
+  .spinner-heart {
+    font-size: 3rem;
+    animation: spin-heart 1s infinite alternate;
+    margin-bottom: 15px;
+  }
+}
+
+@keyframes spin-heart {
+  from { transform: scale(0.8); }
+  to { transform: scale(1.2); }
+}

@@ -1,0 +1,27 @@
+<div class="search-container">
+  
+  <div class="search-header text-center">
+    <p class="subtitle">Resultados para:</p>
+    <h1 class="query-title">"{{ query }}" 🌸</h1>
+  </div>
+
+  <!-- ESTADO: CARGANDO -->
+  <div *ngIf="isLoading" class="loading-state flex-center flex-column">
+    <div class="spinner-border text-pink mb-20" role="status"></div>
+    <p>Consultando la biblioteca global...</p>
+  </div>
+
+  <!-- ESTADO: SIN RESULTADOS -->
+  <div *ngIf="!isLoading && hasSearched && books.length === 0" class="empty-state text-center">
+    <i class="fa-solid fa-face-sad-tear icon-empty"></i>
+    <h3>No encontramos libros con ese nombre</h3>
+    <p>Intenta buscar por autor o prueba con otra palabra clave.</p>
+    <a routerLink="/home" class="btn btn-outline mt-20">Volver al inicio</a>
+  </div>
+
+  <!-- ESTADO: LISTA DE RESULTADOS -->
+  <div *ngIf="!isLoading && books.length > 0" class="results-grid">
+    <app-book-card *ngFor="let book of books" [book]="book"></app-book-card>
+  </div>
+
+</div>
