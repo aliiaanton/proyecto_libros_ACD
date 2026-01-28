@@ -1,1 +1,19 @@
-<p>blind-date works!</p>
+<div class="blind-date-container">
+  <div class="mystery-card" *ngIf="!isRevealed">
+    <h2>"{{ bookData.quote.text }}"</h2>
+    <div class="tags">
+      <span *ngFor="let tag of bookData.tags" class="badge">{{ tag.name }}</span>
+    </div>
+    <p class="hint">Un libro de {{ bookData.genre.name }}</p>
+    
+    <button (click)="revealBook()" class="btn-reveal">Me interesa, revelar libro</button>
+    <button (click)="loadNextBlindDate()" class="btn-skip">Siguiente</button>
+  </div>
+
+  <div class="revealed-book" *ngIf="isRevealed">
+    <img [src]="bookData.coverUrl" alt="Portada">
+    <h3>{{ bookData.title }}</h3>
+    <p>{{ bookData.description }}</p>
+    <button (click)="saveToLibrary()">Guardar en 'Por Leer'</button>
+  </div>
+</div>

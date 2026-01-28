@@ -9,29 +9,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repositorio para la gestión de datos de la entidad Book.
- * Extiende JpaRepository para proporcionar operaciones CRUD estándar y consultas personalizadas.
- */
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    /**
-     * Busca un libro en la base de datos local utilizando el ID de Google Books.
-     *
-     * @param googleBookId El identificador único proporcionado por la API de Google.
-     * @return Un Optional que contiene el libro si se encuentra, o vacío si no.
-     */
     Optional<Book> findByGoogleBookId(String googleBookId);
 
     /**
      * Algoritmo de Recomendación:
-     * Busca libros que pertenezcan a una lista de géneros específicos,
-     * EXCLUYENDO aquellos que el usuario ya tiene en su lista de lectura (leídos, pendientes, etc.).
-     *
-     * @param genres Lista de nombres de géneros (Strings) en los que buscar.
-     * @param userId El ID del usuario para excluir sus libros ya guardados.
-     * @return Lista de libros recomendados que coinciden con los criterios.
+     * Busca libros por lista de géneros, EXCLUYENDO los que el usuario ya tiene en su lista.
      */
     @Query("SELECT DISTINCT b FROM Book b " +
             "JOIN b.genres g " +
@@ -40,4 +25,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "    SELECT rs.book.bookId FROM ReadingStatus rs WHERE rs.user.userId = :userId" +
             ")")
     List<Book> findRecommendations(@Param("genres") List<String> genres, @Param("userId") Long userId);
+
+    /**
+     * Fallback: Devuelve libros aleatorios si no hay datos del usuario.
+     * Nota: ORDER BY RAND() es para MySQL. Si usas PostgreSQL cambia RAND() por RANDOM().
+     */
+    @Query(value = "SELECT * FROM books ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    List<Book> findRandomBooks(@Param("limit") int limit);
 }

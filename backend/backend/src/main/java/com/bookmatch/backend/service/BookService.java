@@ -49,6 +49,26 @@ public class BookService {
         return bookRepository.findByGoogleBookId(googleId).orElse(null);
     }
 
+    /**
+     * Obtiene un libro por su ID local en la base de datos.
+     *
+     * @param bookId ID del libro en la base de datos local.
+     * @return El libro encontrado o null si no existe.
+     */
+    public Book getBookById(Long bookId) {
+        return bookRepository.findById(bookId).orElse(null);
+    }
+
+    /**
+     * Obtiene una lista de libros aleatorios de la base de datos.
+     *
+     * @param limit Número de libros aleatorios a obtener.
+     * @return Lista de libros aleatorios.
+     */
+    public List<Book> findRandomBooks(int limit) {
+        return bookRepository.findRandomBooks(limit);
+    }
+
     // Método auxiliar para convertir de DTO a Entidad
     private Book convertToBookEntity(GoogleBooksResponse.Item item) {
         GoogleBooksResponse.VolumeInfo info = item.getVolumeInfo();

@@ -3,9 +3,18 @@ package com.bookmatch.backend.service;
 import com.bookmatch.backend.dto.AuthResponse;
 import com.bookmatch.backend.dto.LoginRequest;
 import com.bookmatch.backend.dto.RegisterRequest;
+import com.bookmatch.backend.dto.UpdateUserProfileRequest;
+import com.bookmatch.backend.entity.Genre;
+import com.bookmatch.backend.entity.Tag;
 import com.bookmatch.backend.entity.User;
+import com.bookmatch.backend.entity.UserGenrePreference;
+import com.bookmatch.backend.entity.UserTagPreference;
 import com.bookmatch.backend.enums.Role;
+import com.bookmatch.backend.repository.GenreRepository;
+import com.bookmatch.backend.repository.TagRepository;
+import com.bookmatch.backend.repository.UserGenrePreferenceRepository;
 import com.bookmatch.backend.repository.UserRepository;
+import com.bookmatch.backend.repository.UserTagPreferenceRepository;
 import com.bookmatch.backend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,6 +48,18 @@ public class AuthService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private UserGenrePreferenceRepository userGenrePreferenceRepository;
+
+    @Autowired
+    private UserTagPreferenceRepository userTagPreferenceRepository;
 
     /**
      * Autentica a un usuario existente verificando sus credenciales (email y contraseña).
@@ -89,8 +110,9 @@ public class AuthService {
      * Verifica que el email no exista previamente, encripta la contraseña usando BCrypt
      * y asigna el rol de usuario base (USER) por defecto.
      * Genera un token de verificación y envía un email al usuario para que verifique su cuenta.
+     * Guarda también las preferencias iniciales de géneros y tags si se proporcionan.
      *
-     * @param request Objeto con los datos del formulario de registro (usuario, email, password).
+     * @param request Objeto con los datos del formulario de registro (usuario, email, password, preferencias).
      * @return El objeto User que ha sido guardado en la base de datos.
      * @throws RuntimeException Si el email o username ya está registrado en el sistema.
      */
@@ -121,7 +143,35 @@ public class AuthService {
         // 4. Guardar en MySQL
         User savedUser = userRepository.save(user);
 
-        // 5. Enviar email de verificación
+        // 5. Guardar preferencias de géneros si se proporcionan
+        if (request.getGenrePreferenceIds() != null && !request.getGenrePreferenceIds().isEmpty()) {
+            for (Long genreId : request.getGenrePreferenceIds()) {
+                Genre genre = genreRepository.findById(genreId).orElse(null);
+                if (genre != null) {
+                    UserGenrePreference preference = UserGenrePreference.builder()
+                            .user(savedUser)
+                            .genre(genre)
+                            .build();
+                    userGenrePreferenceRepository.save(preference);
+                }
+            }
+        }
+
+        // 6. Guardar preferencias de tags si se proporcionan
+        if (request.getTagPreferenceIds() != null && !request.getTagPreferenceIds().isEmpty()) {
+            for (Long tagId : request.getTagPreferenceIds()) {
+                Tag tag = tagRepository.findById(tagId).orElse(null);
+                if (tag != null) {
+                    UserTagPreference preference = UserTagPreference.builder()
+                            .user(savedUser)
+                            .tag(tag)
+                            .build();
+                    userTagPreferenceRepository.save(preference);
+                }
+            }
+        }
+
+        // 7. Enviar email de verificación
         emailService.sendVerificationEmail(savedUser.getEmail(), verificationToken);
 
         return savedUser;
@@ -147,6 +197,61 @@ public class AuthService {
         user.setEmailVerified(true);
         user.setVerificationToken(null);
         user.setVerificationTokenExpiry(null);
+        userRepository.save(user);
+    }
+
+    /**
+     * Actualiza el perfil del usuario (bio y preferencias).
+     *
+     * @param email Email del usuario a actualizar
+     * @param request Datos a actualizar
+     * @throws RuntimeException Si el usuario no se encuentra
+     */
+    public void updateUserProfile(String email, UpdateUserProfileRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Actualizar bio si se proporciona
+        if (request.getBio() != null) {
+            user.setBio(request.getBio());
+        }
+
+        // Actualizar preferencias de géneros si se proporcionan
+        if (request.getGenrePreferenceIds() != null) {
+            // Eliminar preferencias anteriores
+            userGenrePreferenceRepository.deleteAll(user.getGenrePreferences());
+
+            // Añadir nuevas preferencias
+            for (Long genreId : request.getGenrePreferenceIds()) {
+                Genre genre = genreRepository.findById(genreId).orElse(null);
+                if (genre != null) {
+                    UserGenrePreference preference = UserGenrePreference.builder()
+                            .user(user)
+                            .genre(genre)
+                            .build();
+                    userGenrePreferenceRepository.save(preference);
+                }
+            }
+        }
+
+        // Actualizar preferencias de tags si se proporcionan
+        if (request.getTagPreferenceIds() != null) {
+            // Eliminar preferencias anteriores
+            userTagPreferenceRepository.deleteAll(user.getTagPreferences());
+
+            // Añadir nuevas preferencias
+            for (Long tagId : request.getTagPreferenceIds()) {
+                Tag tag = tagRepository.findById(tagId).orElse(null);
+                if (tag != null) {
+                    UserTagPreference preference = UserTagPreference.builder()
+                            .user(user)
+                            .tag(tag)
+                            .build();
+                    userTagPreferenceRepository.save(preference);
+                }
+            }
+        }
+
         userRepository.save(user);
     }
 }

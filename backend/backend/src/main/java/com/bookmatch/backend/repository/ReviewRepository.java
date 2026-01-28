@@ -19,4 +19,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      * @return Lista de reseñas del libro.
      */
     List<Review> findByBook(Book book);
+    List<Review> findByUser_UserIdAndRatingGreaterThanEqual(Long userId, Integer rating);
 }

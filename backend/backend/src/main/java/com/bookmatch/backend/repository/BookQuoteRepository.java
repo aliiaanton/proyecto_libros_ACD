@@ -1,9 +1,11 @@
 package com.bookmatch.backend.repository;
 
+import com.bookmatch.backend.entity.Book;
 import com.bookmatch.backend.entity.BookQuote;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /**
  * Repositorio para la gestión de citas de libros en la base de datos.
@@ -20,4 +22,12 @@ public interface BookQuoteRepository extends JpaRepository<BookQuote, Long> {
      */
     @Query(value = "SELECT * FROM book_quotes ORDER BY RAND() LIMIT 1", nativeQuery = true)
     BookQuote findRandomQuote();
+
+    /**
+     * Obtiene todas las citas de un libro específico.
+     *
+     * @param book El libro del cual obtener citas.
+     * @return Lista de citas del libro.
+     */
+    List<BookQuote> findByBook(Book book);
 }
