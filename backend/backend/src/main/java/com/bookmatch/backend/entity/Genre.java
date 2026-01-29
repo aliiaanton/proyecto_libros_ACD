@@ -1,5 +1,6 @@
 package com.bookmatch.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
@@ -32,5 +33,6 @@ public class Genre {
 
     /** Libros asociados a este género (relación inversa) */
     @ManyToMany(mappedBy = "genres")
+    @JsonIgnore
     private Set<Book> books = new HashSet<>();
 }

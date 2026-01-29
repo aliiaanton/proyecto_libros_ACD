@@ -3,15 +3,21 @@ package com.bookmatch.backend.service;
 import com.bookmatch.backend.dto.GoogleBooksResponse;
 import com.bookmatch.backend.entity.Book;
 import com.bookmatch.backend.repository.BookRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class BookService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookService.class);
 
     @Autowired
     private BookRepository bookRepository;
@@ -22,27 +28,51 @@ public class BookService {
     // URL base de la API de Google
     private final String GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
-    // Método para buscar libros en Google
+    /**
+     * Busca libros en Google Books con manejo de errores y timeouts.
+     * @param query Término de búsqueda
+     * @return Lista de libros encontrados o lista vacía si hay error
+     */
     public List<Book> searchBooksInGoogle(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            logger.warn("Búsqueda realizada con query vacío");
+            return new ArrayList<>();
+        }
+
         // 1. Construimos la URL (ej: ...volumes?q=harry+potter)
         // Reemplazamos espacios por "+" porque las URLs no aceptan espacios
         String url = GOOGLE_API_URL + query.replace(" ", "+");
+        logger.info("Buscando libros con URL: {}", url);
 
-        // 2. Hacemos la llamada a Internet
-        // Le decimos: "Ve a esta URL y lo que vuelva, mételo en la clase GoogleBooksResponse"
-        GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
+        try {
+            // 2. Hacemos la llamada a Internet con timeout configurado
+            GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
 
-        List<Book> resultBooks = new ArrayList<>();
+            List<Book> resultBooks = new ArrayList<>();
 
-        // 3. Convertimos los datos de Google (DTO) a nuestros Libros (Entity)
-        if (response != null && response.getItems() != null) {
-            for (GoogleBooksResponse.Item item : response.getItems()) {
-                Book book = convertToBookEntity(item);
-                resultBooks.add(book);
+            // 3. Convertimos los datos de Google (DTO) a nuestros Libros (Entity)
+            if (response != null && response.getItems() != null) {
+                logger.info("Se encontraron {} libros para la búsqueda: {}", response.getItems().size(), query);
+                for (GoogleBooksResponse.Item item : response.getItems()) {
+                    Book book = convertToBookEntity(item);
+                    resultBooks.add(book);
+                }
+            } else {
+                logger.info("No se encontraron libros para la búsqueda: {}", query);
             }
-        }
 
-        return resultBooks;
+            return resultBooks;
+
+        } catch (ResourceAccessException e) {
+            logger.error("Timeout o error de conexión al buscar en Google Books: {}", e.getMessage());
+            return new ArrayList<>();
+        } catch (HttpClientErrorException e) {
+            logger.error("Error HTTP al buscar en Google Books: {} - {}", e.getStatusCode(), e.getMessage());
+            return new ArrayList<>();
+        } catch (Exception e) {
+            logger.error("Error inesperado al buscar en Google Books: {}", e.getMessage(), e);
+            return new ArrayList<>();
+        }
     }
 
     public Book getBookByGoogleId(String googleId) {
@@ -111,15 +141,23 @@ public class BookService {
         String url = GOOGLE_API_SINGLE_URL + googleId;
 
         try {
+            logger.info("Obteniendo libro de Google Books con ID: {}", googleId);
             // Llamamos a Google pidiendo UN solo libro
             GoogleBooksResponse.Item item = restTemplate.getForObject(url, GoogleBooksResponse.Item.class);
 
             if (item != null) {
+                logger.info("Libro encontrado en Google Books: {}", googleId);
                 Book newBook = convertToBookEntity(item); // Reusamos tu método convertidor existente
                 return bookRepository.save(newBook); // ¡Aquí ocurre la magia de la persistencia!
+            } else {
+                logger.warn("No se encontró libro en Google Books con ID: {}", googleId);
             }
+        } catch (ResourceAccessException e) {
+            logger.error("Timeout al obtener libro {} de Google Books: {}", googleId, e.getMessage());
+        } catch (HttpClientErrorException e) {
+            logger.error("Error HTTP {} al obtener libro {}: {}", e.getStatusCode(), googleId, e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error trayendo libro de Google: " + e.getMessage());
+            logger.error("Error inesperado al obtener libro {} de Google Books: {}", googleId, e.getMessage(), e);
         }
         return null; // O lanzar una excepción personalizada
     }
